@@ -1,0 +1,16 @@
+{
+    "name": "CodeSmileEditor.IMGUI",
+    "rootNamespace": "CodeSmileEditor",
+    "references": ["GUID:ab3919ebbd07e2942927d7de75b26404"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
