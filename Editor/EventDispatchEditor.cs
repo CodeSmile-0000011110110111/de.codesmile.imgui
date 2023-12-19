@@ -9,8 +9,8 @@ namespace CodeSmileEditor
 {
 	public class EventDispatchEditor : Editor
 	{
-		private GuiEventDispatcher m_Dispatcher;
-		public GuiEventDispatcher Dispatcher => m_Dispatcher;
+		private GuiEventDispatcher m_EventDispatcher;
+		public GuiEventDispatcher EventDispatcher => m_EventDispatcher;
 
 		// tbd Input state
 		// hashcode (control hint)
@@ -18,7 +18,7 @@ namespace CodeSmileEditor
 
 		// default control
 
-		public void ProcessEvent(IGuiEventReceiver receiver, Int32 controlId = 0)
+		public void DispatchEvent(IGuiEvents receiver, Int32 controlId = 0)
 		{
 			// var currentEvent = Event.current;
 			// var filteredEventType = currentEvent.GetTypeForControl(controlId);
@@ -26,8 +26,8 @@ namespace CodeSmileEditor
 			// if (filteredEventType == EventType.Layout)
 			// 	HandleUtility.AddDefaultControl(controlId);
 
-			m_Dispatcher ??= new GuiEventDispatcher(receiver);
-			m_Dispatcher.ProcessEvent(controlId);
+			m_EventDispatcher ??= new GuiEventDispatcher(receiver);
+			m_EventDispatcher.ProcessCurrentEvent(controlId);
 		}
 
 		// TODO: implement these in another class
