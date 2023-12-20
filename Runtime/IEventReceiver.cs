@@ -13,7 +13,7 @@ namespace CodeSmile.IMGUI
 	///     This makes it easier to write IMGUI event handling code compared to the classic C-style code that
 	///     involves either ```switch (Event.current.type) {..}``` or comparable if/else if conditions.
 	/// </summary>
-	public interface IGuiEvents
+	public interface IEventTarget
 	{
 		/// <summary>
 		///     Use this for classic event handling where you switch over the type.
@@ -22,7 +22,7 @@ namespace CodeSmile.IMGUI
 		/// </summary>
 		/// <param name="currentEvent">The Event.current instance.</param>
 		/// <param name="filteredEventType">The event type for the control.</param>
-		public void OnGuiEvent(Event evt, EventType filteredEventType);
+		public Boolean OnGuiEvent(Event evt, EventType filteredEventType);
 
 		public Boolean OnKeyDownEvent(Event evt, KeyCode keyCode) => false;
 		public Boolean OnKeyUpEvent(Event evt, KeyCode keyCode) => false;
@@ -48,8 +48,18 @@ namespace CodeSmile.IMGUI
 		/// <returns>Return true to stop the event from being processed by other controls, eg calls event.Use().</returns>
 		public Boolean OnKeyboardCharacterEvent(Event evt, Char character) => false;
 
-		public Boolean OnMouseEnterWindowEvent(Event evt) => false;
-		public Boolean OnMouseLeaveWindowEvent(Event evt) => false;
+		public Boolean OnPointerEnterWindowEvent(Event evt, Vector2 position) => false;
+		public Boolean OnPointerLeaveWindowEvent(Event evt, Vector2 position) => false;
+
+		/// <summary>
+		///     Called when the left mouse button is double-clicked or the screen is double-tapped.
+		/// </summary>
+		/// <param name="button"></param>
+		/// <returns></returns>
+		public Boolean OnDoubleClickEvent(Event evt) => false;
+
+		public Boolean OnContextClickEvent(Event evt, Vector2 position) => false;
+
 
 		/// <summary>
 		///     Called when processing an EventType.MouseDown.
@@ -57,27 +67,21 @@ namespace CodeSmile.IMGUI
 		/// <param name="evt">Current event.</param>
 		/// <param name="button">Indicates which button was pressed.</param>
 		/// <returns>True to use (consume) this event, false otherwise.</returns>
-		public Boolean OnMouseDownEvent(Event evt, MouseButton button) => false;
-
-		/// <summary>
-		///     Called when the left or middle mouse button is double-clicked.
-		/// </summary>
-		/// <remarks>Due to context menu, this does not seem to work for right mouse button. </remarks>
-		/// <param name="button"></param>
-		/// <returns></returns>
-		public Boolean OnMouseDoubleClickEvent(Event evt, MouseButton button) => false;
-
-		public Boolean OnMouseUpEvent(Event evt, MouseButton button) => false;
-		public Boolean OnMouseMoveEvent(Event evt, Vector2 mousePosition, Vector2 positionDelta) => false;
-		public Boolean OnMouseDragEvent(Event evt, Vector2 mousePosition, Vector2 positionDelta) => false;
+		public Boolean OnPointerDownEvent(Event evt, MouseButton button) => false;
+		public Boolean OnPointerUpEvent(Event evt, MouseButton button) => false;
+		public Boolean OnPointerMoveEvent(Event evt, Vector2 position, Vector2 positionDelta) => false;
+		public Boolean OnPointerDragEvent(Event evt, Vector2 position, Vector2 positionDelta) => false;
 		public Boolean OnScrollWheelEvent(Event evt, Vector2 wheelDelta) => false;
 
 		public Boolean OnDragUpdateEvent(Event evt, Vector2 position) => false;
 		public Boolean OnDragPerformEvent(Event evt, Vector2 position) => false;
 		public Boolean OnDragCancelEvent(Event evt, Vector2 position) => false;
 
-		public Boolean OnValidateCopyCommand(Event evt) => false;
-		public Boolean OnExecuteCopyCommand(Event evt) => false;
+		public Boolean OnValidateCommandEvent(Event evt, EventCommand command) => false;
+		public Boolean OnExecuteCommandEvent(Event evt, EventCommand command) => false;
+
+		public Boolean OnLayoutEvent(Event evt) => false;
+		public Boolean OnRepaintEvent(Event evt) => false;
 
 		/// <summary>
 		///     If the event should be used this is called right before actually using the event.
