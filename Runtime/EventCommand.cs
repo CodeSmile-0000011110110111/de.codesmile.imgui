@@ -10,7 +10,7 @@ namespace CodeSmile.IMGUI
 	///         Event.commandName string is required.
 	///     </remarks>
 	/// </summary>
-	public enum GuiCommand
+	public enum EventCommand
 	{
 		Custom,
 

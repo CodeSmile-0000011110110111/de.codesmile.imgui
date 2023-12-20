@@ -7,38 +7,26 @@ using UnityEngine;
 
 namespace CodeSmile.IMGUI
 {
-	public sealed class GuiEventDispatch
+	public sealed class EventDispatch
 	{
-		private readonly IGuiEvents m_Target;
+		private readonly IEventReceiver m_Receiver;
 
-		private Int32 m_ControlId;
 		private Event m_Event;
+		private Int32 m_ControlId;
 
-		/// <summary>
-		///     The Id of the control for which events are currently being processed.
-		///     Is 0 outside of event processing.
-		/// </summary>
-		public Int32 ControlId => m_ControlId;
-
-		/// <summary>
-		///     The Event.current instance currently being processed.
-		///     Is null outside of event processing.
-		/// </summary>
-		public Event CurrentEvent => m_Event;
-
-		private GuiEventDispatch() {} // hidden paramless ctor
+		private EventDispatch() {} // hidden paramless ctor
 
 		/// <summary>
 		///     Create an instance of a GUI event dispatcher.
 		/// </summary>
-		/// <param name="target">The receiver that will get On**Event methods called.</param>
+		/// <param name="receiver">The receiver that will get On**Event methods called.</param>
 		/// <exception cref="ArgumentNullException"></exception>
-		public GuiEventDispatch([NotNull] IGuiEvents target)
+		public EventDispatch([NotNull] IEventReceiver receiver)
 		{
-			if (target == null)
-				throw new ArgumentNullException(nameof(target));
+			if (receiver == null)
+				throw new ArgumentNullException(nameof(receiver));
 
-			m_Target = target;
+			m_Receiver = receiver;
 		}
 
 		/// <summary>
@@ -50,20 +38,20 @@ namespace CodeSmile.IMGUI
 		///     The Id for the control. If you pass 0 (default) then controlId will be the
 		///     IGuiEventReceiver's ```GetHashCode()``` value under the assumption that the receiver manages a single control.
 		/// </param>
-		public void ProcessCurrentEvent(Int32 controlId = 0)
+		public void DispatchCurrentEvent(Int32 controlId)
 		{
 			SetEventProperties(controlId);
 
 			var filteredEventType = m_Event.GetTypeForControl(controlId);
 
-			var shouldUseEvent = m_Target.OnGuiEvent(m_Event, filteredEventType);
+			var shouldUseEvent = m_Receiver.OnGuiEvent(m_Event, filteredEventType);
 			if (shouldUseEvent == false)
 				shouldUseEvent = DispatchEvent(filteredEventType);
 
 			if (shouldUseEvent)
 			{
 				// called before event.Use() on purpose since Use() will change EventType to "Used"
-				m_Target.OnWillUseEvent(m_Event);
+				m_Receiver.OnWillUseEvent(m_Event);
 
 				m_Event.Use();
 			}
@@ -119,42 +107,42 @@ namespace CodeSmile.IMGUI
 		};
 
 		private Boolean DispatchKeyDownEvent() => m_Event.keyCode != KeyCode.None
-			? m_Target.OnKeyDownEvent(m_Event, m_Event.keyCode)
-			: m_Target.OnKeyboardCharacterEvent(m_Event, m_Event.character);
+			? m_Receiver.OnKeyDownEvent(m_Event, m_Event.keyCode)
+			: m_Receiver.OnKeyboardCharacterEvent(m_Event, m_Event.character);
 
-		private Boolean DispatchKeyUpEvent() => m_Target.OnKeyUpEvent(m_Event, m_Event.keyCode);
+		private Boolean DispatchKeyUpEvent() => m_Receiver.OnKeyUpEvent(m_Event, m_Event.keyCode);
 
 		private Boolean DispatchPointerDownEvent() => m_Event.clickCount == 2
-			? m_Target.OnDoubleClickEvent(m_Event)
-			: m_Target.OnPointerDownEvent(m_Event, m_Event.MouseButton());
+			? m_Receiver.OnDoubleClickEvent(m_Event)
+			: m_Receiver.OnPointerDownEvent(m_Event, m_Event.MouseButton());
 
-		private Boolean DispatchPointerUpEvent() => m_Target.OnPointerUpEvent(m_Event, m_Event.MouseButton());
+		private Boolean DispatchPointerUpEvent() => m_Receiver.OnPointerUpEvent(m_Event, m_Event.MouseButton());
 
 		private Boolean DispatchPointerMoveEvent() =>
-			m_Target.OnPointerMoveEvent(m_Event, m_Event.mousePosition, m_Event.delta);
+			m_Receiver.OnPointerMoveEvent(m_Event, m_Event.mousePosition, m_Event.delta);
 
 		private Boolean DispatchPointerDragEvent() =>
-			m_Target.OnPointerDragEvent(m_Event, m_Event.mousePosition, m_Event.delta);
+			m_Receiver.OnPointerDragEvent(m_Event, m_Event.mousePosition, m_Event.delta);
 
 		private Boolean DispatchPointerEnterEvent() =>
-			m_Target.OnPointerEnterWindowEvent(m_Event, m_Event.mousePosition);
+			m_Receiver.OnPointerEnterWindowEvent(m_Event, m_Event.mousePosition);
 
 		private Boolean DispatchPointerLeaveEvent() =>
-			m_Target.OnPointerLeaveWindowEvent(m_Event, m_Event.mousePosition);
+			m_Receiver.OnPointerLeaveWindowEvent(m_Event, m_Event.mousePosition);
 
-		private Boolean DispatchDragUpdateEvent() => m_Target.OnDragUpdateEvent(m_Event, m_Event.mousePosition);
-		private Boolean DispatchDragPerformEvent() => m_Target.OnDragPerformEvent(m_Event, m_Event.mousePosition);
-		private Boolean DispatchDragCancelEvent() => m_Target.OnDragCancelEvent(m_Event, m_Event.mousePosition);
-		private Boolean DispatchContextClickEvent() => m_Target.OnContextClickEvent(m_Event, m_Event.mousePosition);
-		private Boolean DispatchScrollWheelEvent() => m_Target.OnScrollWheelEvent(m_Event, m_Event.delta);
-		private Boolean DispatchValidateCommandEvent() => m_Target.OnValidateCommandEvent(m_Event, m_Event.Command());
-		private Boolean DispatchExecuteCommandEvent() => m_Target.OnExecuteCommandEvent(m_Event, m_Event.Command());
-		private Boolean DispatchLayoutEvent() => m_Target.OnLayoutEvent(m_Event);
-		private Boolean DispatchRepaintEvent() => m_Target.OnRepaintEvent(m_Event);
+		private Boolean DispatchDragUpdateEvent() => m_Receiver.OnDragUpdateEvent(m_Event, m_Event.mousePosition);
+		private Boolean DispatchDragPerformEvent() => m_Receiver.OnDragPerformEvent(m_Event, m_Event.mousePosition);
+		private Boolean DispatchDragCancelEvent() => m_Receiver.OnDragCancelEvent(m_Event, m_Event.mousePosition);
+		private Boolean DispatchContextClickEvent() => m_Receiver.OnContextClickEvent(m_Event, m_Event.mousePosition);
+		private Boolean DispatchScrollWheelEvent() => m_Receiver.OnScrollWheelEvent(m_Event, m_Event.delta);
+		private Boolean DispatchValidateCommandEvent() => m_Receiver.OnValidateCommandEvent(m_Event, m_Event.Command());
+		private Boolean DispatchExecuteCommandEvent() => m_Receiver.OnExecuteCommandEvent(m_Event, m_Event.Command());
+		private Boolean DispatchLayoutEvent() => m_Receiver.OnLayoutEvent(m_Event);
+		private Boolean DispatchRepaintEvent() => m_Receiver.OnRepaintEvent(m_Event);
 
 		private void SetEventProperties(Int32 controlId)
 		{
-			m_ControlId = controlId != 0 ? controlId : m_Target.GetHashCode();
+			m_ControlId = controlId;
 			m_Event = Event.current;
 		}
 

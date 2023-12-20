@@ -13,7 +13,7 @@ namespace CodeSmile.IMGUI
 	///     This makes it easier to write IMGUI event handling code compared to the classic C-style code that
 	///     involves either ```switch (Event.current.type) {..}``` or comparable if/else if conditions.
 	/// </summary>
-	public interface IEventTarget
+	public interface IEventReceiver
 	{
 		/// <summary>
 		///     Use this for classic event handling where you switch over the type.
@@ -22,7 +22,7 @@ namespace CodeSmile.IMGUI
 		/// </summary>
 		/// <param name="currentEvent">The Event.current instance.</param>
 		/// <param name="filteredEventType">The event type for the control.</param>
-		public Boolean OnGuiEvent(Event evt, EventType filteredEventType);
+		public Boolean OnGuiEvent(Event evt, EventType filteredEventType) => false;
 
 		public Boolean OnKeyDownEvent(Event evt, KeyCode keyCode) => false;
 		public Boolean OnKeyUpEvent(Event evt, KeyCode keyCode) => false;

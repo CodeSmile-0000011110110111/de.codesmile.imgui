@@ -7,10 +7,14 @@ namespace CodeSmile.IMGUI
 	///     Specifies which On*GUI method an event was dispatched from.
 	/// </summary>
 	/// <seealso cref="">
-	///     - <see cref="CodeSmile.IMGUI.GuiEventDispatch" />
+	///     - <see cref="EventDispatch" />
 	/// </seealso>
-	public enum GuiContext
+	public enum EventContext
 	{
+		/// <summary>
+		/// Outside event processing.
+		/// </summary>
+		None,
 		/// <summary>
 		/// Event dispatched from a OnGUI message method.
 		/// </summary>

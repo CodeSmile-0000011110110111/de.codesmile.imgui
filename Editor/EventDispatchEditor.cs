@@ -7,27 +7,31 @@ using UnityEditor;
 
 namespace CodeSmileEditor
 {
-	public class EventDispatchEditor : Editor
+	public class EventDispatchEditor : Editor, IEventReceiver
 	{
-		private GuiEventDispatcher m_EventDispatcher;
-		public GuiEventDispatcher EventDispatcher => m_EventDispatcher;
+		private EventDispatch m_Dispatch;
+		public EventContext EventContext { get; private set; }
+		public Int32 ControlId { get; private set; }
 
-		// tbd Input state
-		// hashcode (control hint)
-		// focus type
-
-		// default control
-
-		public void DispatchEvent(IGuiEvents receiver, Int32 controlId = 0)
+		public void DispatchEvent(EventContext eventContext = EventContext.OnGui, Int32 controlId = 0)
 		{
-			// var currentEvent = Event.current;
-			// var filteredEventType = currentEvent.GetTypeForControl(controlId);
-			//
-			// if (filteredEventType == EventType.Layout)
-			// 	HandleUtility.AddDefaultControl(controlId);
+			m_Dispatch ??= new EventDispatch(this);
 
-			m_EventDispatcher ??= new GuiEventDispatcher(receiver);
-			m_EventDispatcher.ProcessCurrentEvent(controlId);
+			SetEventDispatchProperties(eventContext, controlId);
+			m_Dispatch.DispatchCurrentEvent(ControlId);
+			ResetEventDispatchProperties();
+		}
+
+		private void SetEventDispatchProperties(EventContext eventContext, Int32 controlId)
+		{
+			EventContext = eventContext;
+			ControlId = controlId != 0 ? controlId : GetHashCode();
+		}
+
+		private void ResetEventDispatchProperties()
+		{
+			EventContext = EventContext.None;
+			ControlId = 0;
 		}
 
 		// TODO: implement these in another class
