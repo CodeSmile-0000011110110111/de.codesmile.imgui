@@ -13,25 +13,25 @@ namespace CodeSmileEditor
 		public EventContext EventContext { get; private set; }
 		public Int32 ControlId { get; private set; }
 
-		public void DispatchEvent(EventContext eventContext = EventContext.OnGui, Int32 controlId = 0)
+		public void DispatchEvent(Int32 controlId, EventContext eventContext = EventContext.OnGui)
 		{
 			m_Dispatch ??= new EventDispatch(this);
 
-			SetEventDispatchProperties(eventContext, controlId);
+			SetEventDispatchProperties(controlId, eventContext);
 			m_Dispatch.DispatchCurrentEvent(ControlId);
 			ResetEventDispatchProperties();
 		}
 
-		private void SetEventDispatchProperties(EventContext eventContext, Int32 controlId)
+		private void SetEventDispatchProperties(Int32 controlId, EventContext eventContext)
 		{
-			EventContext = eventContext;
 			ControlId = controlId != 0 ? controlId : GetHashCode();
+			EventContext = eventContext;
 		}
 
 		private void ResetEventDispatchProperties()
 		{
-			EventContext = EventContext.None;
 			ControlId = 0;
+			EventContext = EventContext.None;
 		}
 
 		// TODO: implement these in another class

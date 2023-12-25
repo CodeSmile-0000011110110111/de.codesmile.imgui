@@ -80,8 +80,8 @@ namespace CodeSmile.IMGUI
 		public Boolean OnValidateCommandEvent(Event evt, EventCommand command) => false;
 		public Boolean OnExecuteCommandEvent(Event evt, EventCommand command) => false;
 
-		public Boolean OnLayoutEvent(Event evt) => false;
-		public Boolean OnRepaintEvent(Event evt) => false;
+		public void OnLayoutEvent(Event evt) {}
+		public void OnRepaintEvent(Event evt) {}
 
 		/// <summary>
 		///     If the event should be used this is called right before actually using the event.

@@ -137,8 +137,17 @@ namespace CodeSmile.IMGUI
 		private Boolean DispatchScrollWheelEvent() => m_Receiver.OnScrollWheelEvent(m_Event, m_Event.delta);
 		private Boolean DispatchValidateCommandEvent() => m_Receiver.OnValidateCommandEvent(m_Event, m_Event.Command());
 		private Boolean DispatchExecuteCommandEvent() => m_Receiver.OnExecuteCommandEvent(m_Event, m_Event.Command());
-		private Boolean DispatchLayoutEvent() => m_Receiver.OnLayoutEvent(m_Event);
-		private Boolean DispatchRepaintEvent() => m_Receiver.OnRepaintEvent(m_Event);
+		private Boolean DispatchLayoutEvent()
+		{
+			m_Receiver.OnLayoutEvent(m_Event);
+			return false;
+		}
+
+		private Boolean DispatchRepaintEvent()
+		{
+			m_Receiver.OnRepaintEvent(m_Event);
+			return false;
+		}
 
 		private void SetEventProperties(Int32 controlId)
 		{
